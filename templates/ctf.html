@@ -1,0 +1,82 @@
+{% include 'header.html' %}
+{% include 'navbar.html' %}
+<div class="container">
+	<h3>{{ session['id'] }}'s score : {{ score }}</h3>
+</div>
+<div class="container">
+	<div class="row">
+	{% for quiz in quizs %}
+	{# quiz : [id,title,content,point,champ,solved,prev] #}
+	{% if quiz[6] == 'locked' %}
+	<div class="row col s12 m6 l4 section">
+		<div class="card grey lighten-3">
+			<div class="card-content white-text">
+				<span class="card-title flow-text">{{ quiz[1] }}</span>
+        	</div>
+        	<div class="card-action disabled">
+          	<a class="grey lighten-1 btn">View</a>
+        	</div>
+		</div>
+	</div>
+	{% elif quiz[6] == 'solved' %}
+	<div class="row col s12 m6 l4 section">
+		<div class="card green lighten-3">
+			<div class="card-content white-text">
+				<p class="card-title" style="white-space:nowrap;overflow:hidden">{% if quiz[4]==session['id'] %}👑{% endif %}{{ quiz[1] }}</p>
+        	</div>
+        	<div class="card-action">
+				<a class="waves-effect waves-light green lighten-1 btn modal-trigger" href="#quiz{{ quiz[0] }}modal">View</a>
+        	</div>
+		</div>
+	</div>
+	{% elif quiz[6] == 'solvable' %}
+	<div class="row col s12 m6 l4 section">
+		<div class="card blue lighten-3" style="border-left:15px;border-right:15px">
+			<div class="card-content white-text">
+				<p class="card-title" style="white-space:nowrap;overflow:hidden">{{ quiz[1] }}</p>
+        	</div>
+        	<div class="card-action">
+				<a class="waves-effect waves-light blue lighten-1 btn modal-trigger" href="#quiz{{ quiz[0] }}modal">View</a>
+        	</div>
+		</div>
+	</div>
+	{% endif %}
+	{% endfor %}
+	{% for quiz in quizs %}
+	{% if quiz[6] == 'solved' %}	
+	<div id="quiz{{ quiz[0] }}modal" class="modal modal-fixed-footer">
+		<div class="modal-content">
+			<h4>{{ quiz[1] }}</h4>
+			<p>{{ quiz[2] }}</p>
+		</div>
+		<div class="modal-footer" style="height:90px">
+			<center><h4>this problem is already solved!</h4></center>
+		</div>
+	</div>
+	{% elif quiz[6] == 'solvable' %}
+	<div id="quiz{{ quiz[0] }}modal" class="modal modal-fixed-footer" style="height:75%">
+		<div class="modal-content">
+			<h4>{{ quiz[1] }}</h4>
+			<p>{{ quiz[2] }}</p>
+		</div>
+		<div class="modal-footer" style="height:90px">
+			<form method="POST">
+				<div class="row" style="margin-bottom:0px">
+					<input name="id" type="hidden" value="{{ quiz[0] }}">
+					<div class="input-field inline col s10" style="margin-bottom:0px">
+						<input id="quiz{{ quiz[0] }}flag" placeholder="FLAG{...}" name="flag" type="text" class="validate">
+						<label for="quiz{{ quiz[0] }}flag">FLAG</label>
+					</div>
+					<button class="btn teal lighten-1 waves-effect waves-light btn-large col s2" type="submit">submit
+						<i class="material-icons right">send</i>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	{% endif %}
+	{% endfor %}
+
+	</div>
+</div>
+{% include 'footer.html' %}

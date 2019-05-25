@@ -1,0 +1,153 @@
+{% include 'header.html' %}
+{% include 'navbar.html' %}
+<div class="container">
+	<div class="row">
+		<form class="col s12" method="GET">
+			<div class="input-field col s3">
+				<select name="init">
+					<option value="" {% if request.args.get['initial'] in (None,'') %}selected{% endif %}>All</option>
+					{% for initial in '#ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ' %}
+					<option value="{{ initial }}" {% if request.args.get['initial'] == initial %}selected{% endif %}>{{ initial }}</option>
+					{% endfor %}
+				</select>
+				<label>Choose initial letter</label>
+			</div>
+			<div class="input-field col s3">
+				<select name="sort">
+					<option value="" {% if request.args.get['type'] in (None,'') %}selected{% endif %}>All</option>
+					<option value="R" {% if request.args.get['type'] == 'regular'%}selected{% endif %}>정규</option>
+					<option value="O" {% if request.args.get['type'] == 'original'%}selected{% endif %}>OVA/ONA</option>
+					<option value="M" {% if request.args.get['type'] == 'movie' %}selected{% endif %}>극장판</option>
+				</select>
+				<label>Choose type</label>
+			</div>
+			<div class="input-field col s3">
+				<select name="year" id="selectyear">
+					<option value="" {% if request.args.get['quarter'] in (None,'') %}selected{% endif %}>All</option>
+					{% for year in range(1990,2020) %}
+					<option value="{{ year }}" {% if request.args.get['quarter'] == year %}select{% endif %}>{{ year }}</option>
+					{% endfor %}
+				</select>
+				<label>Choose year</label>
+			</div>
+			<div class="input-field col s3">
+				<select name="quarter" id="selectquarter">
+					<option value="" {% if request.args.get['quarter'] in (None,'') %} selected{% endif %}>All</option>
+				{% for quarter in range(1,5) %}
+					<option value="{{ quarter }}" {% if request.args.get['quarter'] == quarter %}selected{% endif %}>{{ quarter }}</option>
+				{% endfor %}
+				</select>
+				<label>Choose quarter</label>
+			</div>
+			<div class="col s6">
+				<button class="btn teal lighten-1 waves-effect waves-light" type="submit">search
+					<i class="material-icons right">search</i>
+				</button>
+			</div>
+		</form>
+	</div>
+	{{ anilist|length }} results found.<br>
+	{% if anilist|length > 0 %}
+	<div class="collection">
+		{% for ani in anilist %}
+		<a class="collection-item" onclick="javascript:openFolder('{{ ani[3] }}')">{{ ani[0] }}</a>
+		{% endfor %}
+	</div>
+	{% endif %}
+</div>
+<div id="folderviewmodal" class="modal" style="height:75%">
+	<div class="modal-content" id="folderviewcontent">
+		
+	</div>
+</div>
+<script>
+paths = [];
+function _loadFolder(folderid){
+	var folderviewcontent = document.getElementById('folderviewcontent');
+	folderviewcontent.innerHTML =`
+	<center>
+	<div class="preloader-wrapper big active">
+		<div class="spinner-layer spinner-blue-only">
+			<div class="circle-clipper left">
+				 <div class="circle"></div>
+			</div>
+			<div class="gap-patch">
+				<div class="circle"></div>
+			</div>
+			<div class="circle-clipper right">
+				<div class="circle"></div>
+			</div>
+		</div>
+	</div>
+	</center>`;
+	var request = new XMLHttpRequest();
+	request.open('GET', '/folderview/'+folderid, true);
+	request.onload = function() {
+		if (request.status >= 200 && request.status < 400) {
+			var data = JSON.parse(request.responseText);
+			var newcontent = `
+				<div class="collection">`;
+			if(paths.length > 1)
+				newcontent += `
+					<a onclick = "javascript:upperFolder()" class="collection-item">..</a>`;
+			for(var idx in data.folders){
+				var folder = data.folders[idx];
+				newcontent += `
+				<a onclick="moveFolder('`+folder.id+`')" class="collection-item">`+folder.name+`</a>`;		
+			}
+			for(var idx in data.files){
+				file = data.files[idx];
+				newcontent += `
+				<div class="collection-item">`;
+				newcontent += file.name;
+				if (file.mime.split('/')[0] == 'video'){
+					newcontent += `
+					<div class="secondary-content">`;
+					newcontent += `
+					<a class="tooltipped" data-position="bottom" data-tooltip="play" href="../player?videoid=`+file.id+`" target="_blank">
+						<i class="material-icons">play_circle_outline</i>
+					</a>`;
+					for(var subidx in file.subs){
+						var sub = file.subs[subidx];
+						newcontent+=`
+					<a class="tooltipped" data-position="bottom" data-tooltip="play with `;
+						newcontent += sub.type + ` subtitle" href="../player?videoid=`+file.id+`&subtype=`
+						newcontent += sub.type + `&subid=`+ sub.id +`" target="_blank">
+					<i class="material-icons">play_circle_filled</i>
+					</a>`;
+					}
+					newcontent += `
+						</div>`;
+				}
+				newcontent += `
+					</div>`;
+			}
+			newcontent += `
+			</div>`;
+			var folderviewcontent = document.getElementById('folderviewcontent');
+			folderviewcontent.innerHTML = newcontent;
+			var elems = document.querySelectorAll('.tooltipped');
+			var instances = M.Tooltip.init(elems);
+		}
+		else {
+			
+		}
+	};
+	request.send();
+}
+function openFolder(folderid){
+	paths = [folderid];
+	_loadFolder(folderid);
+	var folderviewmodal = M.Modal.getInstance(document.getElementById('folderviewmodal'));
+	folderviewmodal.open();
+}
+function moveFolder(folderid){
+	paths.push(folderid);
+	_loadFolder(folderid);
+}
+function upperFolder(){
+	paths.pop();
+	_loadFolder(paths[paths.length - 1])
+}
+</script>
+{% include 'footer.html' %}

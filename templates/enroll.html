@@ -1,0 +1,55 @@
+{% include 'header.html' %}
+{% include 'navbar.html' %}
+<div class="container">
+	<form action="/enroll" method="post" class="col s12">
+		<div class="row">
+			<div class="input-field col s12">
+				<input id="titleinput" name="title" type="text" class="validate">
+				<label for="titleinput">Title</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<textarea id="contentinput" name="content" class="materialize-textarea"></textarea>
+				<label for="contentinput">Content</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<input id="previnput" name="prev" type="text" class="validate">
+				<label for="previnput">Prev quizs ex) 0|1|3</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<input id="flaginput" name="flag" type="text" class="validate">
+				<label for="flaginput">FLAG</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<input id="pointinput" name="point" type="number" class="validate">
+				<label for="pointinput">Point</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s12">
+				<button class="btn teal lighten-1 waves-effect waves-light" type="submit" name="action">Submit</button>
+			</div>
+		</div>
+	</form>
+	<form action="/enroll" method="post" class="col s12">
+		<div class="row">
+			<div class="input-field col s12">
+				<textarea id="csvinput" name="csv" type="text" class="materialize-textarea"></textarea>
+				<label for="csvinput">CSV format input</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s12">
+				<button class="btn teal lighten-1 waves-effect waves-light" type="submit" name="action">Submit</button>
+			</div>
+		</div>
+	</form>
+</div>
+{% include 'footer.html' %}
