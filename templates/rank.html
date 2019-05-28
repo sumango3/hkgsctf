@@ -1,7 +1,6 @@
 {% include 'header.html' %}
 {% include 'navbar.html' %}
 <div class="container">
-	{% set idx = 1%}
 	<table>
 		<thead>
 			<tr>
@@ -13,11 +12,10 @@
 		<tbody>
 		{% for row in scores %}
 			<tr>
-				<th>{% if idx == 1 %}🥇{% elif idx == 2 %}🥈{% elif idx == 3 %}🥉{% else %}{{ idx }}{% endif %}</th>
+				<th>{% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}</th>
 				<th>{{ row[0] }}</th>
 				<th>{{ row[1] }}</th>
 			</tr>
-			{% set idx = idx + 1 %}
 		{% endfor %}
 		</tbody>
 	</table>

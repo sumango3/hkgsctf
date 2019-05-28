@@ -14,7 +14,9 @@
 				<span class="card-title flow-text">{{ quiz[1] }}</span>
         	</div>
         	<div class="card-action disabled">
-          	<a class="grey lighten-1 btn">View</a>
+          		<a class="grey lighten-1 btn">View</a>
+				<a class="grey lighten-1 btn">Solved : {{ quiz[5] }}</a>
+				<p color="white">Solved : {{ quiz[5] }} Point : {{ quiz[3] }}</p>
         	</div>
 		</div>
 	</div>
@@ -33,11 +35,12 @@
 	<div class="row col s12 m6 l4 section">
 		<div class="card blue lighten-3" style="border-left:15px;border-right:15px">
 			<div class="card-content white-text">
-				<p class="card-title" style="white-space:nowrap;overflow:hidden">{{ quiz[1] }}</p>
+				<p class="card-title" style="white-space:nowrap;overflow:hidden" title="{{ quiz[1] }}">({{quiz[3]}}){{ quiz[1] }}</p>
         	</div>
         	<div class="card-action">
 				<a class="waves-effect waves-light blue lighten-1 btn modal-trigger" href="#quiz{{ quiz[0] }}modal">View</a>
-        	</div>
+				<span class="new badge blue lighten-1" data-badge-caption="">Solved:{{ quiz[5] }}</span>
+			</div>
 		</div>
 	</div>
 	{% endif %}
