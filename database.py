@@ -89,13 +89,14 @@ def solve(member_id, quiz_id, member_flag):
 			addpoint = quiz_point
 			solvedset.add(quiz_id)
 			newsolved = set2str(solvedset)
-			if solved == 0 and auth == 1:
-				addpoint += bonus
-				query = 'UPDATE quiz set champ=?, solved=? where id=?'
-				c.execute(query,[member_id, solved+1, quiz_id])
-			else:
-				query = 'UPDATE quiz set solved=? where id=?'
-				c.execute(query,[solved+1, quiz_id])
+			if auth == 1:
+				if solved == 0:
+					addpoint += bonus
+					query = 'UPDATE quiz set champ=?, solved=? where id=?'
+					c.execute(query,[member_id, solved+1, quiz_id])
+				else:
+					query = 'UPDATE quiz set solved=? where id=?'
+					c.execute(query,[solved+1, quiz_id])
 			query = 'UPDATE member set solved=?, point=? where id=?'
 			c.execute(query,[newsolved, member_point+addpoint, member_id])
 			return 1
